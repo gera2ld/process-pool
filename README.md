@@ -1,5 +1,9 @@
 # @gera2ld/process-pool
 
+![NPM](https://img.shields.io/npm/v/@gera2ld/process-pool.svg)
+![License](https://img.shields.io/npm/l/@gera2ld/process-pool.svg)
+![Downloads](https://img.shields.io/npm/dt/@gera2ld/process-pool.svg)
+
 `process-pool` allows you to do CPU expensive stuff in multiple processes to make use of multiple CPU cores.
 
 ## Usage
