@@ -1,0 +1,9 @@
+node_modules
+*.log
+*.lock
+/.idea
+/dist
+/lib
+/.nyc_output
+/coverage
+/types
