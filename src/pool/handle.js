@@ -6,6 +6,7 @@ const getId = idFactory();
 export default class Handle {
   constructor({ modulePath, args, options }) {
     this.id = getId();
+    this.active = true;
     this.process = fork(modulePath, args, options);
     this.process.on('message', ({ id, data, error }) => {
       const deferred = this.deferredMap[id];
@@ -27,6 +28,7 @@ export default class Handle {
   }
 
   invoke(method, params) {
+    if (!this.active) throw new Error('Worker deactivated');
     if (!params) params = [];
     else if (!Array.isArray(params)) params = [params];
     const id = this.getMessageId();
@@ -50,6 +52,7 @@ export default class Handle {
   }
 
   async destroy() {
+    this.active = false;
     await this.drain();
     this.process.kill();
   }

@@ -8,7 +8,7 @@ export default class Pool {
     this.forkData = forkData;
     this.waiting = [];
     this.handles = {
-      all: [],
+      all: new Set(),
       available: [],
       busy: new Set(),
     };
@@ -17,9 +17,9 @@ export default class Pool {
   async get() {
     let handle = this.handles.available.shift();
     if (!handle) {
-      if (this.handles.all.length < this.size) {
+      if (this.handles.all.size < this.size) {
         handle = new Handle(this.forkData);
-        this.handles.all.push(handle);
+        this.handles.all.add(handle);
       } else {
         const deferred = defer();
         this.waiting.push(deferred);
@@ -50,9 +50,11 @@ export default class Pool {
     }
   }
 
-  async destroy() {
-    for (const handle of this.handles.all) {
-      await handle.destroy();
-    }
+  shrink() {
+    const available = this.handles.available.splice(0);
+    available.forEach(handle => {
+      this.handles.all.delete(handle);
+    });
+    return Promise.all(available.map(handle => handle.destroy()));
   }
 }
