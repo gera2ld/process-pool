@@ -4,9 +4,9 @@ import { idFactory, defer } from './util';
 const getId = idFactory();
 
 export default class Handle {
-  constructor(modulePath) {
+  constructor({ modulePath, args, options }) {
     this.id = getId();
-    this.process = fork(modulePath);
+    this.process = fork(modulePath, args, options);
     this.process.on('message', ({ id, data, error }) => {
       const deferred = this.deferredMap[id];
       if (deferred) {

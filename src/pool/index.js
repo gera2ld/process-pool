@@ -2,22 +2,23 @@ import { defer } from './util';
 import Handle from './handle';
 
 export default class Pool {
-  constructor(size, modulePath) {
+  constructor(size, forkData) {
     this.size = size;
-    this.modulePath = modulePath;
+    if (typeof forkData === 'string') forkData = { modulePath: forkData };
+    this.forkData = forkData;
+    this.waiting = [];
     this.handles = {
       all: [],
       available: [],
       busy: new Set(),
     };
-    this.waiting = [];
   }
 
   async get() {
     let handle = this.handles.available.shift();
     if (!handle) {
       if (this.handles.all.length < this.size) {
-        handle = new Handle(this.modulePath);
+        handle = new Handle(this.forkData);
         this.handles.all.push(handle);
       } else {
         const deferred = defer();
